@@ -1,8 +1,9 @@
 name: Update Repository
 
 on:
-  schedule: # run 15 mins after jlcpcb kicad library's own daily build
-    - cron: "15 6 * * *"
+  schedule: # Run 30 mins after JLCPCB-Kicad-Library's own daily build (45 7 UTC),
+            # giving it time to publish its GitHub release before this reads it.
+    - cron: "15 8 * * *"
   workflow_dispatch: # allow manually triggering the workflow
 
 jobs:
