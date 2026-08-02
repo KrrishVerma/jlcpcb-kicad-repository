@@ -8,7 +8,11 @@ import zipfile
 from typing import List, Dict, Optional
 
 # Configuration
-GITHUB_RELEASES_URL = "https://api.github.com/repos/CDFER/JLCPCB-Kicad-Library/releases"
+# Points at KRRISHVERMA's independent fork/rebuild of JLCPCB-Kicad-Library
+# (which itself sources fresh component data from KRRISHVERMA's fork of
+# jlcpcb-parts-database), rather than CDFER's original repo, since CDFER's
+# upstream data pipeline has been stalled since April 2026.
+GITHUB_RELEASES_URL = "https://api.github.com/repos/KRRISHVERMA/JLCPCB-Kicad-Library/releases"
 DEFAULT_STATUS = "stable"
 DEFAULT_KICAD_VERSION = "8.0"
 PER_PAGE = 100
