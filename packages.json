@@ -1,0 +1,33 @@
+{
+    "packages": [
+        {
+            "name": "JLCPCB KiCad Library",
+            "description": "A set of symbol Libraries and a set of footprints and 3d models of the basic components from JLCPCB smt assembly",
+            "description_full": "A full KiCad library containing matched schematic symbols and PCB footprints, complete with 3D STEP models. All components are from JLCPCB's basic and preferred parts list, ensuring no extra setup costs. This is a community mirror created because the upstream CDFER/cd_fer-kicad-repository sync automation stalled in July 2025 (see https://github.com/CDFER/JLCPCB-Kicad-Library/issues/47). All credit for the library content itself goes to Chris Dirks (CDFER).",
+            "identifier": "com.github.CDFER.JLCPCB-Kicad-Library",
+            "type": "library",
+            "author": {
+                "name": "Chris Dirks",
+                "contact": {
+                    "email": "cdirksfer@gmail.com",
+                    "web": "https://keastudios.co.nz/"
+                }
+            },
+            "maintainer": {
+                "name": "Krrish Verma",
+                "contact": {
+                    "email": "vermakrrish804@gmail.com"
+                }
+            },
+            "license": "MIT",
+            "resources": {
+                "homepage": "https://github.com/CDFER/JLCPCB-Kicad-Library"
+            },
+            "tags": [
+                "footprints",
+                "symbols"
+            ],
+            "versions": []
+        }
+    ]
+}
