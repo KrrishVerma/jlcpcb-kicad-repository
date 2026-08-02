@@ -49,25 +49,6 @@ A GitHub Actions workflow (`.github/workflows/update-repo.yml`):
 - Bumps the timestamp in `repository.json`.
 - Commits the changes back to `main`.
 
-### First run / catch-up
-
-Because the upstream feed hasn't synced in over a year, the **first** run of
-this workflow will need to download and hash several hundred release zips.
-That's slow but only happens once. To run it immediately instead of waiting
-for the next scheduled run:
-
-Actions tab → **Update Repository** → **Run workflow**.
-
-### Setup checklist for a fresh repo
-
-- [ ] Repo Settings → Actions → General → **Workflow permissions** set to
-      "Read and write permissions" (needed for the auto-commit step to push).
-- [ ] If this repo was created via **fork**, enable Actions under the
-      Actions tab first — GitHub disables Actions on forks by default.
-- [ ] Trigger `workflow_dispatch` once manually and confirm `packages.json`
-      / `repository.json` get committed with the current release before
-      relying on the daily schedule.
-
 ## License
 
 MIT — see [LICENSE](LICENSE). Original automation design by Chris Dirks
