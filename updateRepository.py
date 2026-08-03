@@ -133,8 +133,47 @@ def validate_packages_structure(packages: Dict) -> None:
         raise KeyError(f"Missing required keys in packages.json: {required_keys}")
 
 
-def update_packages_json(packages_json_file: str, releases: List[Dict]) -> None:
-    """Update packages.json with new release information."""
+ASSET_CACHE_FILE = "asset_cache.json"
+
+
+def load_asset_cache(cache_file: str) -> Dict[str, str]:
+    """Load the version -> asset `updated_at` cache.
+
+    This is bookkeeping-only, kept in a separate file so packages.json
+    itself never carries any fields outside what PCM's schema expects.
+    """
+    try:
+        with open(cache_file, "r") as f:
+            return json.load(f)
+    except (FileNotFoundError, json.JSONDecodeError):
+        return {}
+
+
+def save_asset_cache(cache_file: str, cache: Dict[str, str]) -> None:
+    with open(cache_file, "w") as f:
+        json.dump(cache, f, indent=4, sort_keys=True)
+
+
+def update_packages_json(packages_json_file: str, releases: List[Dict], cache_file: str) -> None:
+    """Update packages.json with new release information.
+
+    IMPORTANT: version tags here are date-based (e.g. "2026.08.03") and can
+    get their release *asset* overwritten multiple times in a single day --
+    every run of the upstream library's build workflow re-uploads a fresh
+    zip under the same tag rather than creating a new tag. A naive "skip if
+    version already recorded" check (the original behavior here) locks in
+    whatever sha256 happened to be computed on the FIRST run of that day,
+    so any later same-day rebuild causes PCM's "Downloaded archive hash
+    does not match repository entry" error -- the recorded hash is for an
+    asset that no longer exists.
+
+    Fix: track each asset's GitHub-reported `updated_at` timestamp in a
+    separate cache file (not inside packages.json, to avoid adding any
+    non-standard fields to what PCM actually parses). If we see the same
+    version tag again but its asset's `updated_at` has moved forward,
+    treat it as changed and recompute the hash/sizes in place, instead of
+    skipping.
+    """
     try:
         with open(packages_json_file, "r") as f:
             packages = json.load(f)
@@ -144,6 +183,7 @@ def update_packages_json(packages_json_file: str, releases: List[Dict]) -> None:
     validate_packages_structure(packages)
 
     existing_versions = {v["version"]: v for package in packages["packages"] for v in package.get("versions", [])}
+    asset_cache = load_asset_cache(cache_file)
 
     # Process oldest-first so newest ends up inserted last (at index 0),
     # keeping packages[0]["versions"] sorted newest-first.
@@ -160,7 +200,14 @@ def update_packages_json(packages_json_file: str, releases: List[Dict]) -> None:
             None,
         )
 
-        if not asset or not version or version in existing_versions:
+        if not asset or not version:
+            continue
+
+        asset_updated_at = asset.get("updated_at", "")
+        existing_entry = existing_versions.get(version)
+
+        if existing_entry is not None and asset_cache.get(version) == asset_updated_at:
+            # Same tag, same asset upload -- genuinely nothing changed.
             continue
 
         download_url = asset.get("browser_download_url")
@@ -181,8 +228,21 @@ def update_packages_json(packages_json_file: str, releases: List[Dict]) -> None:
             "download_url": download_url,
         }
 
-        packages["packages"][0]["versions"].insert(0, new_version)
-        print(f"Added version {version}")
+        if existing_entry is not None:
+            # Same tag, but the asset behind it changed since we last
+            # recorded it (re-released same day) -- update in place rather
+            # than inserting a duplicate.
+            existing_entry.clear()
+            existing_entry.update(new_version)
+            print(f"Refreshed version {version} (asset was re-uploaded)")
+        else:
+            packages["packages"][0]["versions"].insert(0, new_version)
+            existing_versions[version] = new_version
+            print(f"Added version {version}")
+
+        asset_cache[version] = asset_updated_at
+
+    save_asset_cache(cache_file, asset_cache)
 
     try:
         with open(packages_json_file, "w") as f:
@@ -215,7 +275,7 @@ def main() -> None:
     try:
         releases = get_latest_releases(GITHUB_RELEASES_URL)
         print(f"Fetched {len(releases)} releases from GitHub")
-        update_packages_json("packages.json", releases)
+        update_packages_json("packages.json", releases, ASSET_CACHE_FILE)
         update_repository_json("repository.json")
         print("Successfully updated repository metadata")
     except Exception as e:
