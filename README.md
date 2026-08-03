@@ -1,26 +1,8 @@
-# JLCPCB KiCad Library Mirror
+# JLCPCB KiCad Library — PCM Repository
 
-An automatically-maintained KiCad Plugin & Content Manager (PCM) repository
-that serves up-to-date releases of [CDFER/JLCPCB-Kicad-Library](https://github.com/CDFER/JLCPCB-Kicad-Library).
+The KiCad Plugin & Content Manager (PCM) feed for [KrrishVerma/JLCPCB-Kicad-Library](https://github.com/KrrishVerma/JLCPCB-Kicad-Library) — an independently maintained KiCad library built from its own [jlcpcb-parts-database](https://github.com/KrrishVerma/jlcpcb-parts-database) fork.
 
-## Why this exists
-
-The official PCM feed (`CDFER/cd_fer-kicad-repository`) stopped syncing new
-releases in July 2025 because its GitHub Actions schedule trigger was
-commented out. As a result, KiCad's Plugin and Content Manager shows
-`2025.07.18` as the latest available version no matter how many new releases
-CDFER ships. See [issue #47](https://github.com/CDFER/JLCPCB-Kicad-Library/issues/47)
-for details.
-
-This repo runs the same sync logic, but:
-
-- keeps its `schedule:` trigger enabled, and
-- paginates through **all** GitHub releases instead of only the default
-  30 most recent, so it can catch up on the backlog in one run.
-
-All credit for the library content itself goes to Chris Dirks (CDFER). This
-is just a community mirror of the distribution feed while the upstream one is
-stalled.
+This repo, the library, and the parts database are three separate repositories that update themselves in sequence every day, so `packages.json`/`repository.json` here always point at the latest release automatically.
 
 ## Installation
 
@@ -28,28 +10,13 @@ stalled.
 2. Add this repository URL:
 
    ```
-   https://raw.githubusercontent.com/KRRISHVERMA/jlcpcb-kicad-repository/main/repository.json
+   https://raw.githubusercontent.com/KrrishVerma/jlcpcb-kicad-repository/main/repository.json
    ```
 
-3. Select it from the dropdown, find "JLCPCB KiCad Library", and install /
-   update as normal.
+3. Select it from the dropdown, find "JLCPCB KiCad Library", and install as normal.
 
-If you already have CDFER's repository added, you can leave it in place and
-just add this one alongside it, or remove the stale one to avoid confusion.
-
-## Automated maintenance
-
-A GitHub Actions workflow (`.github/workflows/update-repo.yml`):
-
-- Runs daily at 06:15 UTC (15 minutes after JLCPCB-Kicad-Library's own daily
-  build), and on manual `workflow_dispatch`.
-- Fetches all releases from `CDFER/JLCPCB-Kicad-Library` (paginated).
-- Downloads each new release's zip, computes its SHA256/size, and appends it
-  to `packages.json`.
-- Bumps the timestamp in `repository.json`.
-- Commits the changes back to `main`.
+New versions show up in PCM's update notification automatically — there's no need to manually sync anything.
 
 ## License
 
-MIT — see [LICENSE](LICENSE). Original automation design by Chris Dirks
-(CDFER); fork/mirror maintenance by Krrish Verma.
+MIT — see [LICENSE](LICENSE). Original automation design by Chris Dirks (CDFER); independent maintenance and pipeline by Krrish Verma.
