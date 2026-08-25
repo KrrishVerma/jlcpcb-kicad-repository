@@ -29,6 +29,15 @@
             ],
             "versions": [
                 {
+                    "version": "2026.08.25",
+                    "status": "stable",
+                    "kicad_version": "8.0",
+                    "download_sha256": "6f580efa960e783348315d93e9b2db5b331621b63a8906e29900096949153b77",
+                    "download_size": 22704152,
+                    "install_size": 127936459,
+                    "download_url": "https://github.com/KrrishVerma/JLCPCB-Kicad-Library/releases/download/2026.08.25/JLCPCB-KiCad-Library-2026.08.25.zip"
+                },
+                {
                     "version": "2026.08.24",
                     "status": "stable",
                     "kicad_version": "8.0",
