@@ -9,8 +9,8 @@
     },
     "name": "Krrish's KiCad Repository (JLCPCB Library Mirror)",
     "packages": {
-        "update_time_utc": "2026-10-22 13:45:39",
-        "update_timestamp": 1792676739,
+        "update_time_utc": "2026-10-23 13:23:53",
+        "update_timestamp": 1792761833,
         "url": "https://raw.githubusercontent.com/KRRISHVERMA/jlcpcb-kicad-repository/main/packages.json"
     }
 }
